@@ -1,14 +1,11 @@
-import { RouteProp, useRoute } from '@react-navigation/native';
-import React from 'react'
-import { Input, Label, Theme, XStack, YStack, Checkbox, View, Image, Button } from 'tamagui';
-import { RootStackParamList } from '../navigation';
-import { useState } from 'react';
-import { Check } from '@tamagui/lucide-icons';
-import { Alert, Keyboard, StatusBar, TouchableWithoutFeedback } from 'react-native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import Constants from 'expo-constants';
-import { auth } from 'utils/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import { useNavigation } from '@react-navigation/native';
+import React, { useState } from 'react';
+import { Keyboard, StatusBar, TouchableWithoutFeedback } from 'react-native';
+import { Button, Image, Input, Label, View } from 'tamagui';
+import { RootStackParamList } from '../navigation';
+import { auth } from "../utils/firebase";
 
 
 
