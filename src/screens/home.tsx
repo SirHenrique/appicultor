@@ -31,7 +31,8 @@ export default function Home() {
         <View flexDirection='row' justifyContent='center' gap={25}>
           <TouchableOpacity
             style={{ width: 150, height: 150, backgroundColor: '#FBBA25', alignItems: 'center', justifyContent: 'center', borderRadius: 15 }}
-            onPress={() => console.log('ok')}
+            onPress={() => navigation.navigate('QrCode')}
+            
           >
             <Ionicons name='qr-code' size={65} style={{ paddingBottom: 10 }} />
             <Text fontWeight={'bold'} fontSize={18}>Ler QR Code</Text>
