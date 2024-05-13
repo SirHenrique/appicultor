@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import { Button, Text, View, Image } from 'tamagui'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import React from 'react'
-import Login from '../screens/login'
+import Login from '@/screens/login'
 import Home from '@/screens/home';
 import Apiario from '@/screens/apiarios';
 import QrCode from '@/screens/qr-code';
@@ -47,7 +47,7 @@ export default function RootStack() {
                 ),
               }} component={Home} ></Tab.Screen>
 
-              <Tab.Screen name='QrCode' options={{
+ <Tab.Screen name='QrCode' options={{
                 headerShown: false, tabBarLabel: '',
                 tabBarIcon: () => (
                   <View
@@ -76,7 +76,7 @@ export default function RootStack() {
 
 
 
-              <Tab.Screen name='Meus Apiarios' options={{
+              <Tab.Screen name='Apiario' options={{
                 tabBarLabel: 'Meus Apiários',
                 headerShown: false, tabBarIcon: ({ color, focused }) => {
                   if (focused) {

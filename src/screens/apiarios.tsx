@@ -16,7 +16,8 @@ const data = [
  
 
 export default function Apiario() {
-   const renderItem = ({ item }) => (
+
+   const renderItem = ({ item } : {item: any} ) => (
       <TouchableOpacity style={{width:350, height:100, justifyContent:'center', borderRadius:10, paddingHorizontal:10, backgroundColor:'#F5E6C3'}}>
         <View flexDirection='row' justifyContent='space-between'>
         <Text fontWeight={'bold'} fontSize={20} paddingBottom={20}>Apiário {item.id}</Text>

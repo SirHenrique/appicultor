@@ -6,6 +6,8 @@ import { Keyboard, StatusBar, TouchableWithoutFeedback } from 'react-native';
 import { Button, Image, Input, Label, View } from 'tamagui';
 import { RootStackParamList } from '../navigation';
 import { auth } from "../utils/firebase";
+import { UserCollection } from '@/collections/userCollection';
+
 
 
 
@@ -23,12 +25,14 @@ export default function Login() {
   const [senha, setSenha] = useState('');
   const [error, setError] = useState(null);
   const navigation: any = useNavigation();
+  let uc = new UserCollection();
 
   const handleLogin = async () => {
     console.log("entrou")
     try{
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
       console.log('Usuário logado com sucesso', userCredential.user);
+      uc.getUser(userCredential.user.uid)
       navigation.navigate('Menu');
     } catch (err: any) {
       console.log(err);

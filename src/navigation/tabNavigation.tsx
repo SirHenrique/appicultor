@@ -9,7 +9,7 @@ export default function TabRoutes() {
   return (
 <Tab.Navigator>
     <Tab.Screen name='Menu' component={Menu}></Tab.Screen>
-    <Tab.Screen name='Meus Apiários' component={Apiario}></Tab.Screen>
+    <Tab.Screen name='Apiario' component={Apiario}></Tab.Screen>
   </Tab.Navigator>
   )
 }
