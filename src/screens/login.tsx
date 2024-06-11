@@ -62,12 +62,12 @@ export default function Login() {
           </View>
           <View gap={15} width='100%'>
             <View>
-              <Label>Login</Label>
+              <Label fontWeight={'bold'}>Login</Label>
               <Input borderColor="$appPrimary50" onChangeText={setEmail} focusStyle={{ borderColor: "$appPrimary50" }} size="$5" id="email" />
             </View>
             <View>
 
-              <Label>Senha</Label>
+              <Label fontWeight={'bold'}>Senha</Label>
               <Input onChangeText={setSenha} borderColor="$appPrimary50" secureTextEntry={true}
                 focusStyle={{ borderColor: "$appPrimary50" }} size="$5" id="password" />
             </View>
