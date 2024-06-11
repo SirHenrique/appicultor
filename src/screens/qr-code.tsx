@@ -48,6 +48,6 @@ export default function QrCode() {
       }} style={{ flex: 1 }} facing={"back"} onBarcodeScanned={scanned ? undefined : handleBarCodeScanned} >
 
       </CameraView> 
-  //   </View>
+  </View>
   )
 }
