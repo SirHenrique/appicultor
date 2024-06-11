@@ -7,6 +7,7 @@ import { Button, Image, Input, Label, View } from 'tamagui';
 import { RootStackParamList } from '../navigation';
 import { auth } from "../utils/firebase";
 import { UserCollection } from '@/collections/userCollection';
+import { Usuario } from '@/@types/usuario';
 
 
 
@@ -32,8 +33,12 @@ export default function Login() {
     try{
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
       console.log('Usuário logado com sucesso', userCredential.user);
-      uc.getUser(userCredential.user.uid)
+      let dados: Usuario = await uc.getUser(userCredential.user.uid)
+      if(dados.produtor)
       navigation.navigate('Menu');
+      else {
+        alert("Usuário não é do tipo Produtor, logo não é possivel realizar o Login!");
+      }
     } catch (err: any) {
       console.log(err);
       setError(err.message);

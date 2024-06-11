@@ -1,7 +1,13 @@
-import { produtor } from "./produtor"
+import { apiario } from "./apiario";
+
 
 export type Usuario = {
     id: string
     nome: string
-    produtor: produtor;
+    produtor: boolean;
+    cooperativa: boolean;
+    apiario: apiario;
+    cidade: string
+    estado: string
+    matricula: number
 }

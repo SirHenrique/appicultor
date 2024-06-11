@@ -1,3 +1,4 @@
+import { Usuario } from '@/@types/usuario';
 import {db} from '../utils/firebase';
 import {setDoc, doc, deleteDoc, updateDoc, getDocs, collection, query,
   getDoc, where} from 'firebase/firestore'
@@ -10,8 +11,11 @@ public async getUser(userId: string): Promise<any> {
     const docRef = doc(this.userCollection, userId)
 
     const docSnapShot = await getDoc(docRef)
-    if(docSnapShot.exists()) console.log(docSnapShot.data())
-
+    
+    if(docSnapShot.exists()) {
+      return docSnapShot.data()
+    }
+    
   } catch(error) {
     console.log(error)
   }
