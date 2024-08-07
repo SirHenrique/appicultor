@@ -7,8 +7,6 @@ import { Button, Linking, StatusBar } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
 
-type QrCodeSreenRouteProp = RouteProp<RootStackParamList, 'QrCode'>;
-
 export default function QrCode() {
   const [type, setType] = useState("back");
 

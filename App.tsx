@@ -2,11 +2,14 @@ import 'react-native-gesture-handler';
 
 import { useFonts } from 'expo-font';
 import * as SplashScreen from 'expo-splash-screen';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TamaguiProvider } from 'tamagui';
 
 import RootStack from './src/navigation';
 import config from './tamagui.config';
+import { supabase } from '@/utils/supabase';
+import { Session } from '@supabase/supabase-js';
+import Login from '@/screens/login';
 
 SplashScreen.preventAutoHideAsync();
 
@@ -16,9 +19,20 @@ export default function App() {
     InterBold: require('@tamagui/font-inter/otf/Inter-Bold.otf'),
   });
 
+  const [session, setSession] = useState<Session | null>(null)
+
+
+
   useEffect(() => {
     if (loaded) {
       SplashScreen.hideAsync();
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        setSession(session)
+      })
+  
+      supabase.auth.onAuthStateChange((_event, session) => {
+        setSession(session)
+      })
     }
   }, [loaded]);
 
@@ -28,7 +42,7 @@ export default function App() {
 
   return (
     <TamaguiProvider defaultTheme='light' config={config}>
-      <RootStack />
+      { session && session!.user ? ( <RootStack key={session.user.id} session={session} /> ): (<Login/>)}
     </TamaguiProvider>
   );
 }

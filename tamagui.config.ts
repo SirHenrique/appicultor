@@ -29,7 +29,7 @@ const token = createTokens({
   ...tokens,
   color: {
     ...tokens.color,
-    appBackground: '#fffbeb',
+    appBackground: '#fff',
     appPrimary10: '#fef2c7',
     appPrimary20: '#fde38a',
     appPrimary30: '#fccf4d',
@@ -50,7 +50,7 @@ const bodyFont = createInterFont();
 const config = createTamagui({
   light: {
     color: {
-      background: 'gray',
+      background: 'white',
       text: 'black',
     },
   },
@@ -81,7 +81,7 @@ const config = createTamagui({
     hoverNone: { hover: 'none' },
     pointerCoarse: { pointer: 'coarse' },
   }),
-});
+})
 
 type AppConfig = typeof config;
 

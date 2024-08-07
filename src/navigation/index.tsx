@@ -8,25 +8,26 @@ import Login from '@/screens/login'
 import Home from '@/screens/home';
 import Apiario from '@/screens/apiarios';
 import QrCode from '@/screens/qr-code';
+import { Session } from '@supabase/supabase-js';
+import CadastroApiario from '@/screens/cadastro-apiario';
 
 export type RootStackParamList = {
   Overview: undefined
-  Login: { name: string }
   Home: { name: string }
   Apiario: { name: string }
   Menu: { name: string }
   QrCode: { name: string }
+  CadastrarApiario: {name: string}
 }
 
 const Stack = createStackNavigator<RootStackParamList>()
 const Tab = createBottomTabNavigator();
 
 
-export default function RootStack() {
+export default function RootStack({ session }: { session: Session }) {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName='Login' screenOptions={{ headerShown: false }}>
-        <Stack.Screen name='Login' component={Login} />
+      <Stack.Navigator initialRouteName='Menu' screenOptions={{ headerShown: false }}>
         <Stack.Screen name='Menu'>
           {() => (
             <Tab.Navigator screenOptions={{
@@ -45,7 +46,9 @@ export default function RootStack() {
 
                   />
                 ),
-              }} component={Home} ></Tab.Screen>
+              }} >
+                 {props => <Home {...props} session={session} />}
+              </Tab.Screen>
 
  <Tab.Screen name='QrCode' options={{
                 headerShown: false, tabBarLabel: '',
@@ -86,9 +89,14 @@ export default function RootStack() {
                     return (<Image width={40} height={32} source={require('../../assets/Apiario.png')} />)
                   }
                 },
-              }} component={Apiario} ></Tab.Screen>
+              }} >
+                {props => <Apiario {...props} session={session} /> }
+              </Tab.Screen>
             </Tab.Navigator>
           )}
+        </Stack.Screen>
+        <Stack.Screen name='CadastrarApiario' >
+        {props => <CadastroApiario {...props} session={session} /> }
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

@@ -1,9 +1,9 @@
 import { apiario } from "./apiario"
 
 
-export type produtor = {
-    cidade: string
+export type Produtor = {
+    municipio: string
     estado: string
-    matricula: number
-    apiario: apiario[]
+    id: number
+    nome: string
 }
