@@ -10,6 +10,7 @@ import Apiario from '@/screens/apiarios';
 import QrCode from '@/screens/qr-code';
 import { Session } from '@supabase/supabase-js';
 import CadastroApiario from '@/screens/cadastro-apiario';
+import CadastroColmeia from '@/screens/adicionar-colmeias';
 
 export type RootStackParamList = {
   Overview: undefined
@@ -18,6 +19,7 @@ export type RootStackParamList = {
   Menu: { name: string }
   QrCode: { name: string }
   CadastrarApiario: {name: string}
+  CadastrarColmeia: {name: string}
 }
 
 const Stack = createStackNavigator<RootStackParamList>()
@@ -40,10 +42,8 @@ export default function RootStack({ session }: { session: Session }) {
                 headerShown: false, tabBarIcon: ({ color, focused }) => (
                   <Ionicons
                     name={focused ? 'home' : 'home-outline'}
-
                     size={32}
                     color={color}
-
                   />
                 ),
               }} >
@@ -97,6 +97,9 @@ export default function RootStack({ session }: { session: Session }) {
         </Stack.Screen>
         <Stack.Screen name='CadastrarApiario' >
         {props => <CadastroApiario {...props} session={session} /> }
+        </Stack.Screen>
+        <Stack.Screen name='CadastrarColmeia' >
+        {props => <CadastroColmeia {...props} session={session} /> }
         </Stack.Screen>
       </Stack.Navigator>
     </NavigationContainer>

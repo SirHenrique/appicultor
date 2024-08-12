@@ -3,7 +3,8 @@ import { relatorioColmeia } from "./relatorioColmeia"
 export type colmeia = {
     qtdAbelhas: number
     qtdQuadros: number
-    data_instalacao: Date
+    dateInstalacao: string
+    dataInstalacao: Date
     especie: string
-    relatorioColmeia: relatorioColmeia[]
+    apiario_id?: string
 }
