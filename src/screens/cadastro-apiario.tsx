@@ -1,5 +1,4 @@
 import { colmeia } from "@/@types/colmeia";
-import { cardColmeia } from "@/components/cardColmeia";
 import { RootStackParamList } from "@/navigation";
 import useColmeiaStore from "@/store/colmeias";
 import { supabase } from "@/utils/supabase";
@@ -8,7 +7,7 @@ import { RouteProp, useNavigation } from "@react-navigation/native";
 import { Session } from "@supabase/supabase-js";
 import Constants from "expo-constants";
 import { useEffect, useState } from "react";
-import { FlatList, StatusBar, TouchableOpacity } from "react-native";
+import { Alert, FlatList, StatusBar, TouchableOpacity } from "react-native";
 import { Input, Label, View, Text, Button } from "tamagui";
 
 
@@ -51,6 +50,58 @@ export default function CadastroApiario({ session, colmeiaAdicionar }: { session
             }
         }
     }
+
+    function excluirColmeia (index: number) {
+        
+        const array = colmeias.filter((_, i) => i !== index);
+       setColmeias(array)
+       
+    }
+    
+
+    function showAlert (index: number)  {
+        Alert.alert(
+          "Confirmação",
+          "Você tem certeza que deseja excluir a Colmeia?",
+          [
+            {
+              text: "Cancelar",
+              onPress: () => console.log("Cancel Pressed"),
+              style: "cancel"
+            },
+            { text: "OK", onPress: () => excluirColmeia(index) }
+          ],
+          { cancelable: true }
+        );
+      };
+
+
+    const cardColmeia = ({ item, index } : any ) => (
+        <TouchableOpacity style={{width:350, height:150, justifyContent:'center', borderRadius:10, paddingHorizontal:10, margin:10, backgroundColor:'#F5E6C3'}}>
+          <View flexDirection='row' justifyContent='space-between'>
+          <Text fontWeight={'bold'} fontSize={20} paddingBottom={20}>Colmeia {index + 1}</Text>
+          <View flexDirection='row'>
+          <TouchableOpacity style={{backgroundColor:'#FFBC00', marginRight:15, borderRadius:5, height:40, width:40, alignItems:'center', justifyContent:'center'}}>
+           <Ionicons name='pencil' size={30} color={'#fff'}/>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => showAlert(index)} style={{backgroundColor:'#F11010',borderRadius:5, height:40, width:40,alignItems:'center', justifyContent:'center'}}>
+           <Ionicons name='trash' size={30} color={'#fff'}/>
+          </TouchableOpacity>
+          </View>
+    
+          </View>
+          <Text>Qtd. Abelhas: {item.qtdAbelhas}</Text>
+          <Text>Qtd. Quadros: {item.qtdQuadros}</Text>
+          <Text>Tipo Quadro: {item.tipoQuadros}</Text>
+          <Text>Espécie: {item.especie}</Text>
+        </TouchableOpacity>
+      );
+
+
+
+
+
+
     return (
         <View flex={1} backgroundColor='#fff'>
             <View backgroundColor='#FBBA25' height={Constants.statusBarHeight} />
@@ -117,11 +168,6 @@ export default function CadastroApiario({ session, colmeiaAdicionar }: { session
                         </Text>
                     </Button>
                 </TouchableOpacity>
-
-
-
-
-
             </View>
         </View>
     )

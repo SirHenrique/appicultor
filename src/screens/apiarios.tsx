@@ -3,7 +3,7 @@ import { RootStackParamList } from '../navigation';
 import { RouteProp, useFocusEffect, useNavigation, useRoute } from '@react-navigation/native';
 import { View, Text } from 'tamagui';
 import Constants from 'expo-constants';
-import { FlatList, StatusBar } from 'react-native';
+import { Alert, FlatList, StatusBar } from 'react-native';
 import { AlignCenter } from '@tamagui/lucide-icons';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
@@ -30,11 +30,43 @@ export default function Apiario({ session }: { session: Session }) {
       
    },[])
 
+   async function excluirApiarios(id: string) {
+      const { data, error } = await supabase
+    .from('apiario')
+    .update({ status: false })
+    .eq('id', id);
+    if(error) {
+      console.log(error)
+      Alert.alert("Erro ao excluir!", "Infelizmente não foi possivel excluir o apiário desejado")
+    }
+    else {
+       consultarApiarios()
+    }
+   }
+
+
+   function showAlert (id: string)  {
+      Alert.alert(
+        "Confirmação",
+        "Você tem certeza que deseja excluir o Apiário?",
+        [
+          {
+            text: "Cancelar",
+            onPress: () => console.log("Cancel Pressed"),
+            style: "cancel"
+          },
+          { text: "OK", onPress: () => excluirApiarios(id) }
+        ],
+        { cancelable: true }
+      );
+    };
+
    async function consultarApiarios() {
       const { data, error: postError } = await supabase
       .from('apiario')
       .select('*, colmeia (id)')
       .eq('produtor_id', session.user.id)
+      .eq('status', true) 
       .order('created_at', { ascending: true });
       if(postError)
          console.log(postError)
@@ -42,6 +74,9 @@ export default function Apiario({ session }: { session: Session }) {
          setApiarios(data!)
       }
    }
+
+   
+  
 
    const renderItem = ({ item, index } : any ) => (
       <TouchableOpacity style={{width:350, height:100, justifyContent:'center', borderRadius:10, paddingHorizontal:10,margin:10, backgroundColor:'#F5E6C3'}}>
@@ -51,8 +86,8 @@ export default function Apiario({ session }: { session: Session }) {
         <TouchableOpacity style={{backgroundColor:'#FFBC00', marginRight:15, borderRadius:5, height:40, width:40, alignItems:'center', justifyContent:'center'}}>
          <Ionicons name='pencil' size={30} color={'#fff'}/>
         </TouchableOpacity>
-        <TouchableOpacity style={{backgroundColor:'#F11010',borderRadius:5, height:40, width:40,alignItems:'center', justifyContent:'center'}}>
-         <Ionicons name='trash' size={30} color={'#fff'}/>
+        <TouchableOpacity onPress={() => showAlert(item.id)} style={{backgroundColor:'#F11010',borderRadius:5, height:40, width:40,alignItems:'center', justifyContent:'center'}}>
+         <Ionicons name='trash'  size={30} color={'#fff'}/>
         </TouchableOpacity>
         </View>
 

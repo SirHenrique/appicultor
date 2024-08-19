@@ -3,23 +3,27 @@ import { useNavigation } from "@react-navigation/native";
 import { Session } from "@supabase/supabase-js";
 import Constants from "expo-constants";
 import React, { useState } from "react";
-import { Alert, Keyboard, StatusBar, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { Alert, Keyboard, Pressable, StatusBar, TextInput, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import { Button, Checkbox, Input, Label, View, Text } from "tamagui";
-import { TextInputMask } from 'react-native-masked-text';
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Check } from "@tamagui/lucide-icons";
-import { colmeia } from "@/@types/colmeia";
+
 import useColmeiaStore from "@/store/colmeias";
+import moment from "moment";
 
 
 export default function CadastroColmeia({ session }: { session: Session},) {
   const navigation: any = useNavigation();
-  const [dataIns, setDataIns] = useState("")
+  const [dataIns, setDataIns] = useState<Date | null>(null);
   const [quadroNinho, setQuadroNinho] = useState(false);
   const [quadroMelgueira, setQuadroMelgueira] = useState(false);
   const [especie, setEspecie] = useState("");
   const [qtdAbelhas, setQtdAbelhas] = useState(0);
   const [qtdQuadros, setQtdQuadros] = useState(0);
   const { colmeias, setColmeias } = useColmeiaStore();
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  
+
    function handleColmeiaNinho() {
       if(quadroMelgueira)
         setQuadroMelgueira(!quadroMelgueira)
@@ -34,8 +38,18 @@ export default function CadastroColmeia({ session }: { session: Session},) {
       setQuadroMelgueira(!quadroMelgueira)
   }
 
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+    }
+  const hideDatePicker = () => setDatePickerVisibility(false);
+
+  const confirmarData = (date: Date) => {
+    setDatePickerVisibility(false);
+        setDataIns(date);
+  }
+
   function Validar() {
-    if(dataIns.length < 10) {
+    if(!dataIns) {
       Alert.alert("Data Inválida!", "Favor inserir uma data válida!");
       return false;
     }
@@ -63,13 +77,13 @@ export default function CadastroColmeia({ session }: { session: Session},) {
   function handleAdicionar() {
     let validado = Validar()
     if(validado) {
-      const [day, month, year] = dataIns.split('/').map(Number);
-      const data = new Date(year, month - 1, day)
+       if(!dataIns)
+        return
       
       let colmeia: any = {
         qtdAbelhas,
         qtdQuadros,
-        dataInstalacao: data.toISOString(),
+        dataInstalacao: dataIns.toISOString(),
         especie,
         tipoQuadros: quadroNinho ? `Quadro de Ninho` : `Quadro de Melgueira`
       }
@@ -78,7 +92,10 @@ export default function CadastroColmeia({ session }: { session: Session},) {
 
       navigation.navigate('CadastrarApiario')
     }
+    
   }
+
+
 
 return (
   <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -103,40 +120,42 @@ return (
 <View marginHorizontal={10} gap={10}>
   <View>
     <Label fontWeight={'bold'}>Data Instalação</Label>
-    <TextInputMask
-          type={'datetime'}
-          options={{
-            format: 'DD/MM/YYYY',
-          }}
-          placeholder="DD/MM/YYYY"
-          value={dataIns}
-          onChangeText={text => setDataIns(text)}
-          keyboardType="numeric"
-              style={{
-                height: 50,
-                borderColor: '#FBBA25',
-                borderWidth: 1,
-                width: '45%',
-                paddingHorizontal: 10,
-                borderRadius: 10,
-              }}
-            />
+    <Pressable style={{zIndex:999, width:'45%'}} onPress={showDatePicker}>
+        <TextInput
+        numberOfLines={1}
+        editable={false}
+        textAlign="center"
+        onPress={() => setDatePickerVisibility(true)}
+        placeholder="📅 Selecione a Data"
+        value={dataIns ? moment(dataIns).format("DD/MM/YYYY") : ""}
+        style={{height:50, backgroundColor: '#fff', borderWidth:1,width:'100%',borderRadius:15,borderColor:'#fbba25',fontFamily: 'Inter-Medium'}}
+        />
+        <DateTimePickerModal
+        isVisible={isDatePickerVisible}
+        mode="date"
+        locale="pt-BR"
+        onConfirm={(date) => confirmarData(date)}
+        onCancel={hideDatePicker}
+        isDarkModeEnabled={true}
+        />
+        </Pressable>
+
     </View>
     <View flexDirection="row">
       <View width={'45%'}>
       <Label fontWeight={'bold'}>Qtd. Abelhas</Label>
-      <Input value={qtdAbelhas.toString()} keyboardType="numeric" onChangeText={text => setQtdAbelhas(Number(text))} backgroundColor={'#fff'} borderColor="$appPrimary50"  focusStyle={{ borderColor: "$appPrimary50" }} size="$5" id="abelhas"/>
+      <Input fontWeight='bold'  value={qtdAbelhas.toString()} keyboardType="numeric" onChangeText={text => setQtdAbelhas(Number(text))} backgroundColor={'#fff'} borderColor="$appPrimary50"  focusStyle={{ borderColor: "$appPrimary50" }} size="$5" id="abelhas"/>
       </View>
 
       <View marginLeft={25} width={'45%'}>
       <Label fontWeight={'bold'}>Qtd. Quadros</Label>
-      <Input value={qtdQuadros.toString()} onChangeText={text => setQtdQuadros(Number(text))} keyboardType="numeric" backgroundColor={'#fff'} borderColor="$appPrimary50"  focusStyle={{ borderColor: "$appPrimary50" }} size="$5" id="quadros"/>
+      <Input fontWeight='bold'  value={qtdQuadros.toString()} onChangeText={text => setQtdQuadros(Number(text))} keyboardType="numeric" backgroundColor={'#fff'} borderColor="$appPrimary50"  focusStyle={{ borderColor: "$appPrimary50" }} size="$5" id="quadros"/>
       </View>
     </View>
 
     <View>
     <Label fontWeight={'bold'}>Espécie</Label>   
-    <Input value={especie} backgroundColor={'#fff'} onChangeText={setEspecie} borderColor="$appPrimary50"  focusStyle={{ borderColor: "$appPrimary50" }} size="$5" id="especies"/>
+    <Input fontWeight='bold'  value={especie} backgroundColor={'#fff'} onChangeText={setEspecie} borderColor="$appPrimary50"  focusStyle={{ borderColor: "$appPrimary50" }} size="$5" id="especies"/>
     </View>
 
     <View>
