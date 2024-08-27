@@ -2,7 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { Session } from "@supabase/supabase-js";
 import Constants from "expo-constants";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Alert, Keyboard, Pressable, StatusBar, TextInput, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import { Button, Checkbox, Input, Label, View, Text } from "tamagui";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
@@ -10,29 +10,52 @@ import { Check } from "@tamagui/lucide-icons";
 
 import useColmeiaStore from "@/store/colmeias";
 import moment from "moment";
+import { colmeia } from "@/@types/colmeia";
 import { apiario } from "@/@types/apiario";
 import { supabase } from "@/utils/supabase";
 
-interface AdicionarColmeiaProps {
-  route: {
-      params: {
-          session: Session,
-          apiario: apiario,
-          tipo: string
-      }
-  }
-  navigation: any
+interface EditarColmeiaProps {
+    route: {
+        params: {
+            session: Session,
+            colmeia: colmeia,
+            index: number,
+            tipo: string,
+            apiario: apiario
+        }
+    }
+    navigation: any
 }
 
-export default function CadastroColmeia({route, navigation} : AdicionarColmeiaProps) {
-  const [dataIns, setDataIns] = useState<Date | null>(null);
+export default function EditarColmeia({route, navigation} : EditarColmeiaProps) {
+  const [dataIns, setDataIns] = useState<Date>(new Date(route.params.colmeia.dataInstalacao));
   const [quadroNinho, setQuadroNinho] = useState(false);
   const [quadroMelgueira, setQuadroMelgueira] = useState(false);
-  const [especie, setEspecie] = useState("");
-  const [qtdAbelhas, setQtdAbelhas] = useState(0);
-  const [qtdQuadros, setQtdQuadros] = useState(0);
+  const [especie, setEspecie] = useState(route.params.colmeia.especie);
+  const [qtdAbelhas, setQtdAbelhas] = useState(route.params.colmeia.qtdAbelhas);
+  const [qtdQuadros, setQtdQuadros] = useState(route.params.colmeia.qtdQuadros);
   const { colmeias, setColmeias } = useColmeiaStore();
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [index, setIndex] = useState(route.params.index)
+  const [tipo, setTipo] = useState(route.params.tipo)
+
+  useEffect(() => {
+    if(route.params.colmeia.tipoQuadros == "Quadro de Ninho")
+        setQuadroNinho(true)
+    else
+        setQuadroMelgueira(true)
+      
+  }
+  ,[])
+
+  function handleVoltar() {
+    if(tipo == 'local') {
+      navigation.navigate('CadastrarApiario')
+    }
+    else {
+      navigation.navigate('ConsultaApiario', {apiario: route.params.apiario})
+    }
+  }
   
 
    function handleColmeiaNinho() {
@@ -85,51 +108,40 @@ export default function CadastroColmeia({route, navigation} : AdicionarColmeiaPr
     }
   }
 
-  function handleVoltar() {
-    if(route.params.tipo == 'local'){
-      navigation.navigate('CadastrarApiario')
-
-    }
-    else
-    navigation.navigate('ConsultaApiario',{apiario: route.params.apiario})
-  }
-
-  async function handleAdicionar() {
+ async function handleAlterar() {
     let validado = Validar()
     if(validado) {
        if(!dataIns)
         return
       
-      let colmeia: any = {
-        qtdAbelhas,
-        qtdQuadros,
-        dataInstalacao: dataIns.toISOString(),
-        especie,
-        tipoQuadros: quadroNinho ? `Quadro de Ninho` : `Quadro de Melgueira`
-      }
+        let colmeia: any = {
+          qtdAbelhas,
+          qtdQuadros,
+          dataInstalacao: dataIns.toISOString(),
+          especie,
+          tipoQuadros: quadroNinho ? `Quadro de Ninho` : `Quadro de Melgueira`
+        }
 
-      if(route.params.tipo == 'local') {
-        setColmeias([...colmeias, colmeia])
-        console.log("entrou")
-        navigation.navigate('CadastrarApiario')
-      }
-      else {
-        colmeia.apiario_id = route.params.apiario.id
-
-        const {  data: retColmeia, error } = await supabase.from('colmeia').insert(
-          colmeia
-        ).select();
-
-        if (error) {
-          console.log(error)
+        if(tipo == 'local') {
+          let arrayColmeia = colmeias
+          arrayColmeia[index] = colmeia
+            setColmeias(arrayColmeia)
+    
+          navigation.navigate('CadastrarApiario')
         }
         else {
-          navigation.navigate('ConsultaApiario',{apiario: route.params.apiario})
+          const { data, error } = await supabase
+    .from('colmeia')
+    .update(colmeia)
+    .eq('id', route.params.colmeia.id);
+        if(error) {
+            console.log(error)
         }
-
-
-      }
-
+        else {
+            navigation.navigate('ConsultaApiario', {apiario: route.params.apiario})
+        }
+        }
+      
 
     }
     
@@ -253,7 +265,7 @@ return (
     </View>
     </View>
 
-    <TouchableOpacity onPress={handleAdicionar} style={{paddingTop:50}}>
+    <TouchableOpacity onPress={handleAlterar} style={{paddingTop:50}}>
             <Button
             disabled
             width='100%'
@@ -263,7 +275,7 @@ return (
             
             >
                 <Text color='#fff' fontWeight='bold' fontSize={20}>
-                    Adicionar
+                    Alterar
                 </Text>
             </Button>
       </TouchableOpacity>

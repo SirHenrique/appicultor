@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { RootStackParamList } from '../navigation';
-import { RouteProp, useRoute } from '@react-navigation/native';
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native';
 import { View, Text } from 'tamagui';
 import Constants from 'expo-constants';
-import { Button, Linking, StatusBar } from 'react-native';
+import { Alert, Button, Linking, StatusBar } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
 
 
 export default function QrCode() {
   const [type, setType] = useState("back");
-
+  const navigation: any = useNavigation();
   const [scanned, setScanned] = useState(false);
   const [permission, requestPermission] = useCameraPermissions();
 
@@ -29,7 +29,15 @@ export default function QrCode() {
 
   const handleBarCodeScanned = ({ type, data }: { type: any, data: any }) => {
     setScanned(true)
-    console.log(data)
+
+    data = JSON.parse(data)
+    if(data.id) {
+     
+      navigation.navigate('CadastroRelatorio',{apiario: data})
+    }
+    else {
+      Alert.alert("Qr-Code Inválido, favor verificar e caso persista, baixe novamente o QR-Code!")
+    }
     setScanned(false)
   }
 

@@ -1,10 +1,12 @@
 import { relatorioColmeia } from "./relatorioColmeia"
 
 export type colmeia = {
+    id?: string
     qtdAbelhas: number
     qtdQuadros: number
-    dateInstalacao: string
-    dataInstalacao: Date
+    dateInstalacao: Date
+    dataInstalacao: string
     especie: string
     apiario_id?: string
+    tipoQuadros: string
 }

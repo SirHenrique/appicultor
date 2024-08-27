@@ -11,6 +11,12 @@ import QrCode from '@/screens/qr-code';
 import { Session } from '@supabase/supabase-js';
 import CadastroApiario from '@/screens/cadastro-apiario';
 import CadastroColmeia from '@/screens/adicionar-colmeias';
+import EditarApiario from '@/screens/editar-apiario';
+import EditarColmeia from '@/screens/editar-colmeias';
+import ConsultaApiario from '@/screens/consultar-apirario';
+import BaixarQrCode from '@/screens/baixar-qr-code';
+import ConsultaColmeia from '@/screens/consultar-colmeias';
+import CadastroRelatorio from '@/screens/cadastro-relatorio';
 
 export type RootStackParamList = {
   Overview: undefined
@@ -20,6 +26,12 @@ export type RootStackParamList = {
   QrCode: { name: string }
   CadastrarApiario: {name: string}
   CadastrarColmeia: {name: string}
+  EditarApiario: {name: string}
+  EditarColmeia: {name: string}
+  ConsultaApiario: {name: string}
+  BaixarQrCode: {name: string}
+  ConsultaColmeia: {name: string}
+  CadastroRelatorio: {name: string}
 }
 
 const Stack = createStackNavigator<RootStackParamList>()
@@ -98,9 +110,32 @@ export default function RootStack({ session }: { session: Session }) {
         <Stack.Screen name='CadastrarApiario' >
         {props => <CadastroApiario {...props} session={session} /> }
         </Stack.Screen>
-        <Stack.Screen name='CadastrarColmeia' >
-        {props => <CadastroColmeia {...props} session={session} /> }
-        </Stack.Screen>
+        <Stack.Screen name='CadastrarColmeia' //@ts-ignore
+         component={CadastroColmeia}
+         />
+        
+        <Stack.Screen name='EditarApiario' // @ts-ignore
+        component={EditarApiario} 
+         />
+         <Stack.Screen name='EditarColmeia' // @ts-ignore
+        component={EditarColmeia} 
+         />
+         <Stack.Screen name='ConsultaApiario' // @ts-ignore
+        component={ConsultaApiario} 
+         />
+         <Stack.Screen name='BaixarQrCode' // @ts-ignore
+        component={BaixarQrCode} 
+         />
+
+        <Stack.Screen name='ConsultaColmeia' // @ts-ignore
+        component={ConsultaColmeia} 
+         />
+
+        <Stack.Screen name='CadastroRelatorio' // @ts-ignore
+        component={CadastroRelatorio} 
+         />
+        
+        
       </Stack.Navigator>
     </NavigationContainer>
   )

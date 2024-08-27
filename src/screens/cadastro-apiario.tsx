@@ -81,7 +81,7 @@ export default function CadastroApiario({ session, colmeiaAdicionar }: { session
           <View flexDirection='row' justifyContent='space-between'>
           <Text fontWeight={'bold'} fontSize={20} paddingBottom={20}>Colmeia {index + 1}</Text>
           <View flexDirection='row'>
-          <TouchableOpacity style={{backgroundColor:'#FFBC00', marginRight:15, borderRadius:5, height:40, width:40, alignItems:'center', justifyContent:'center'}}>
+          <TouchableOpacity onPress={() => navigation.navigate('EditarColmeia',{colmeia: item, index: index, tipo: "local"})} style={{backgroundColor:'#FFBC00', marginRight:15, borderRadius:5, height:40, width:40, alignItems:'center', justifyContent:'center'}}>
            <Ionicons name='pencil' size={30} color={'#fff'}/>
           </TouchableOpacity>
           <TouchableOpacity onPress={() => showAlert(index)} style={{backgroundColor:'#F11010',borderRadius:5, height:40, width:40,alignItems:'center', justifyContent:'center'}}>
@@ -137,7 +137,7 @@ export default function CadastroApiario({ session, colmeiaAdicionar }: { session
 
                 </View>
 
-                <TouchableOpacity onPress={() => navigation.navigate('CadastrarColmeia', { colmeias: colmeiaAdicionar })}>
+                <TouchableOpacity onPress={() => navigation.navigate('CadastrarColmeia', { colmeias: colmeiaAdicionar, tipo: "local" })}>
                     <Button
                         disabled
                         borderRadius={100}

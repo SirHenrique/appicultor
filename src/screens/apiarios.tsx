@@ -66,7 +66,7 @@ export default function Apiario({ session }: { session: Session }) {
       .from('apiario')
       .select('*, colmeia (id)')
       .eq('produtor_id', session.user.id)
-      .eq('status', true) 
+      .eq('status', true)  
       .order('created_at', { ascending: true });
       if(postError)
          console.log(postError)
@@ -79,11 +79,11 @@ export default function Apiario({ session }: { session: Session }) {
   
 
    const renderItem = ({ item, index } : any ) => (
-      <TouchableOpacity style={{width:350, height:100, justifyContent:'center', borderRadius:10, paddingHorizontal:10,margin:10, backgroundColor:'#F5E6C3'}}>
+      <TouchableOpacity onPress={() => navigation.navigate('ConsultaApiario', {apiario: item})} style={{width:350, height:100, justifyContent:'center', borderRadius:10, paddingHorizontal:10,margin:10, backgroundColor:'#F5E6C3'}}>
         <View flexDirection='row' justifyContent='space-between'>
         <Text fontWeight={'bold'} fontSize={20} paddingBottom={20}>Apiário {index + 1}</Text>
         <View flexDirection='row'>
-        <TouchableOpacity style={{backgroundColor:'#FFBC00', marginRight:15, borderRadius:5, height:40, width:40, alignItems:'center', justifyContent:'center'}}>
+        <TouchableOpacity onPress={() => navigation.navigate('EditarApiario',{apiarioId: item.id, local: item.localizacao, session: session})} style={{backgroundColor:'#FFBC00', marginRight:15, borderRadius:5, height:40, width:40, alignItems:'center', justifyContent:'center'}}>
          <Ionicons name='pencil' size={30} color={'#fff'}/>
         </TouchableOpacity>
         <TouchableOpacity onPress={() => showAlert(item.id)} style={{backgroundColor:'#F11010',borderRadius:5, height:40, width:40,alignItems:'center', justifyContent:'center'}}>
