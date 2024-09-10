@@ -1,7 +1,8 @@
 export type relatorioColmeia = {
-    relatorioId?: number;
-    colmeiaId: string;
+    relatorio_id?: number;
+    colmeia_id: string;
     id?: number;
-    quaColetados: number
+    quaColetados: number;
     situacao: string;
+    index: string;
 }

@@ -4,10 +4,10 @@ import { RootStackParamList } from "@/navigation";
 import useColmeiaStore from "@/store/colmeias";
 import { supabase } from "@/utils/supabase";
 import { Ionicons } from "@expo/vector-icons";
-import { RouteProp, useNavigation } from "@react-navigation/native";
+import { RouteProp, useFocusEffect, useNavigation } from "@react-navigation/native";
 import { Session } from "@supabase/supabase-js";
 import Constants from "expo-constants";
-import React, { useEffect, useRef, useState, } from "react";
+import React, { useCallback, useEffect, useRef, useState, } from "react";
 import { Alert, FlatList, Platform, StatusBar, TouchableOpacity , Button } from "react-native";
 import { Input, Label, View, Text } from "tamagui";
 import * as FileSystem from 'expo-file-system';
@@ -33,7 +33,19 @@ interface QRCodeRef {
 
 export default function BaixarQrCode({route, navigation} : QrCodeProps) {
     const qrCodeRef = useRef<QRCodeRef | null>(null);
-
+    
+    useFocusEffect(useCallback(() => {
+        console.log(route.params.qrcode)
+        
+      }, []))
+  
+     useEffect(() =>  {
+        
+         console.log(route.params.qrcode)
+        
+        
+    
+     },[])
     const handleDownloadQR = async () => {
         console.log(route.params.qrcode)
         try {

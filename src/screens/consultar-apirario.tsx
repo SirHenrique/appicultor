@@ -30,6 +30,7 @@ export default function ConsultaApiario({route, navigation} : ConsultarApiarioPr
     const [colmeias, setColmeias] = useState<colmeia[]>([])
     const [qrCode, setQrCode] = useState("")
     const [apiario, setApiario] = useState<apiario>(route.params.apiario)
+    
     useFocusEffect(useCallback(() => {
         consultarColmeias()
         
@@ -37,15 +38,9 @@ export default function ConsultaApiario({route, navigation} : ConsultarApiarioPr
   
      useEffect(() =>  {
         
-        consultarColmeias()
+         consultarColmeias()
         
-        let qrCode = {
-        id: apiario.id,
-        localizacao: apiario.localizacao,
-        colmeias: colmeias
-        }
-
-        setQrCode(JSON.stringify(qrCode))
+        
     
      },[])
    
@@ -77,6 +72,13 @@ export default function ConsultaApiario({route, navigation} : ConsultarApiarioPr
            console.log(postError)
         else {
             setColmeias(data)
+            let qrCode = {
+                id: apiario.id,
+                localizacao: apiario.localizacao,
+                colmeias: colmeias
+                }
+            console.log(qrCode)
+            setQrCode(JSON.stringify(qrCode))
         }
        }
     
