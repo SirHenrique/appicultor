@@ -196,7 +196,7 @@ return (
     <View flexDirection="row">
       <View width={'45%'}>
       <Label fontWeight={'bold'}>Qtd. Abelhas</Label>
-      <Input fontWeight='bold'  value={qtdAbelhas.toString()} keyboardType="numeric" onChangeText={text => setQtdAbelhas(Number(text))} backgroundColor={'#fff'} borderColor="$appPrimary50"  focusStyle={{ borderColor: "$appPrimary50" }} size="$5" id="abelhas"/>
+      <Input fontWeight='bold'  value={qtdAbelhas.toString()} keyboardType="numeric" onChangeText={text => setQtdAbelhas(Number(text))} backgroundColor={'#fff'} borderColor="$appPrimary50"  focusStyle={{ borderColor: "$appPrimary50" }} size="$5" id="qtdAbelhas"/>
       </View>
 
       <View marginLeft={25} width={'45%'}>

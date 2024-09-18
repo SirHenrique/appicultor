@@ -1,5 +1,6 @@
 import { apiario } from "@/@types/apiario";
 import { colmeia } from "@/@types/colmeia";
+import { relatorio } from "@/@types/relatorio";
 import { RootStackParamList } from "@/navigation";
 import useColmeiaStore from "@/store/colmeias";
 import { supabase } from "@/utils/supabase";
@@ -9,7 +10,7 @@ import { Session } from "@supabase/supabase-js";
 import Constants from "expo-constants";
 import { useCallback, useEffect, useState } from "react";
 import { Alert, FlatList, StatusBar, TouchableOpacity } from "react-native";
-import { Input, Label, View, Text, Button } from "tamagui";
+import { Input, Label, View, Text, Button, ScrollView } from "tamagui";
 
 interface ConsultarApiarioProps {
     route: {
@@ -30,10 +31,11 @@ export default function ConsultaApiario({route, navigation} : ConsultarApiarioPr
     const [colmeias, setColmeias] = useState<colmeia[]>([])
     const [qrCode, setQrCode] = useState("")
     const [apiario, setApiario] = useState<apiario>(route.params.apiario)
+    const [relatorios,setRelatorios] = useState<relatorio[]>([])
     
     useFocusEffect(useCallback(() => {
         consultarColmeias()
-        
+        consultarRelatorio()
       }, []))
   
      useEffect(() =>  {
@@ -81,7 +83,22 @@ export default function ConsultaApiario({route, navigation} : ConsultarApiarioPr
             setQrCode(JSON.stringify(qrCode))
         }
        }
-    
+    async function consultarRelatorio() {
+        const { data, error: postError } = await supabase
+        .from('relatorio')
+        .select('*')
+        .eq('apiario_id', route.params.apiario.id )
+        .order('created_at', { ascending: false });
+
+        console.log(data);
+        
+
+        if(postError)
+            console.log(postError)
+         else {
+            setRelatorios(data)
+         }
+    }
 
     function showAlert (id: string)  {
         Alert.alert(
@@ -98,6 +115,16 @@ export default function ConsultaApiario({route, navigation} : ConsultarApiarioPr
           { cancelable: true }
         );
       };
+
+    function converteData(date: string) {
+        let data = new Date(date)
+        const dia = String(data.getUTCDate()).padStart(2, '0'); // Adiciona zero à esquerda se necessário
+const mes = String(data.getUTCMonth() + 1).padStart(2, '0'); // Os meses são baseados em zero
+const ano = data.getUTCFullYear();
+
+// Formata no padrão DD/MM/AAAA
+return `${dia}/${mes}/${ano}`;
+    }
 
 
     const cardColmeia = ({ item, index } : any ) => (
@@ -121,6 +148,21 @@ export default function ConsultaApiario({route, navigation} : ConsultarApiarioPr
         </TouchableOpacity>
       );
 
+      const cardRelatorio = ({ item, index } : any ) => (
+        <TouchableOpacity onPress={() => navigation.navigate('ConsultaRelatorio',{apiario: apiario, relatorio: item, colmeias: colmeias})} style={{width:350, height:150, justifyContent:'center', borderRadius:10, paddingHorizontal:10, margin:10, backgroundColor:'#F5E6C3'}}>
+          <View flexDirection='row' justifyContent='space-between'>
+          <Text fontWeight={'bold'} fontSize={20} paddingBottom={20}>{converteData(item.dataVisita)}</Text>
+          <View flexDirection='row'>
+          <TouchableOpacity onPress={() => navigation.navigate('EditarColmeia',{colmeia: item, index: index, apiario: route.params.apiario})} style={{backgroundColor:'#FFBC00', marginRight:15, borderRadius:5, height:40, width:40, alignItems:'center', justifyContent:'center'}}>
+           <Ionicons name='pencil' size={30} color={'#fff'}/>
+          </TouchableOpacity>
+          </View>
+          </View>
+          <Text>Objetivo da Visita: {item.objVisita}</Text>
+          <Text>Situação do Apiário: {item.sitApiario}</Text>
+          <Text>Mortalidade: {item.mortalidade ? "Sim" : "Não"}</Text>
+        </TouchableOpacity>
+      );
 
 
 
@@ -156,7 +198,7 @@ export default function ConsultaApiario({route, navigation} : ConsultarApiarioPr
                 </View>
 
             </View>
-            <View marginHorizontal={10} gap={15}>
+            <ScrollView marginHorizontal={10} gap={15}>
                 <View>
                     <Label fontWeight={'bold'}>Localizacao</Label>
                     <Input value={localizacao} disabled={true} backgroundColor={'#fff'} borderColor="$appPrimary50" onChangeText={setLocalizacao} width={'100%'} focusStyle={{ borderColor: "$appPrimary50" }} size="$5" id="localizacao" />
@@ -169,10 +211,9 @@ export default function ConsultaApiario({route, navigation} : ConsultarApiarioPr
                             data={colmeias}
                             renderItem={cardColmeia}
                             keyExtractor={(item, index) => index.toString()}
-                            style={{maxHeight: 300}}
+                            scrollEnabled={false}
                         />
                     </View>) : (<View></View>)}
-
                 </View>
 
                 <TouchableOpacity onPress={() => navigation.navigate('CadastrarColmeia',{apiario: apiario})}>
@@ -190,7 +231,21 @@ export default function ConsultaApiario({route, navigation} : ConsultarApiarioPr
                         </Text>
                     </Button>
                 </TouchableOpacity>
-            </View>
+
+                
+                <View>
+                    <Label fontWeight={'bold'}>Relatórios</Label>
+                    {relatorios!.length > 0 ? (<View alignItems='center' paddingTop={20}>
+                        <FlatList
+                            data={relatorios}
+                            renderItem={cardRelatorio}
+                            keyExtractor={(item, index) => index.toString()}
+                            scrollEnabled={false}
+                        />
+                    </View>) : (<View></View>)}
+
+                </View>
+            </ScrollView>
         </View>
     )
 }

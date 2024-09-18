@@ -3,7 +3,7 @@ import { useNavigation } from "@react-navigation/native";
 import { Session } from "@supabase/supabase-js";
 import Constants from "expo-constants";
 import React, { useEffect, useState } from "react";
-import { Alert, Keyboard, Pressable, StatusBar, TextInput, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
+import { Alert, FlatList, Keyboard, Pressable, StatusBar, TextInput, TouchableOpacity, TouchableWithoutFeedback } from "react-native";
 import { Button, Checkbox, Input, Label, View, Text } from "tamagui";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { Check } from "@tamagui/lucide-icons";
@@ -13,6 +13,8 @@ import moment from "moment";
 import { apiario } from "@/@types/apiario";
 import { supabase } from "@/utils/supabase";
 import { colmeia } from "@/@types/colmeia";
+import { relatorioColmeia } from "@/@types/relatorioColmeia";
+import { ScrollView } from "react-native-gesture-handler";
 
 interface ConsultarColmeiaProps {
   route: {
@@ -34,6 +36,7 @@ export default function ConsultaColmeia({route, navigation} : ConsultarColmeiaPr
   const [qtdAbelhas, setQtdAbelhas] = useState(route.params.colmeia.qtdAbelhas);
   const [qtdQuadros, setQtdQuadros] = useState(route.params.colmeia.qtdQuadros);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+  const [relatorioColmeia, setRelatorioColmeia] = useState<relatorioColmeia[]>([])
 
 
   useEffect(() => {
@@ -41,9 +44,26 @@ export default function ConsultaColmeia({route, navigation} : ConsultarColmeiaPr
         setQuadroNinho(true)
     else
         setQuadroMelgueira(true)
-      
+    
+        consultarRelatorioColmeia();
   }
   ,[])
+
+  const cardRelatorioColmeia = ({ item, index }: any) => (
+    <TouchableOpacity onPress={() => navigation.navigate('ConsultaRelatorioColmeia',{apiario: route.params.apiario, relatorioColmeia: item, colmeia: route.params.colmeia, tipo: "colmeia"})} style={{ width: 350, height: 150, paddingVertical:10, borderRadius: 10, paddingHorizontal: 10, margin: 10, backgroundColor: '#F5E6C3' }}>
+      <View flexDirection='row' justifyContent='space-between'>
+        <Text fontWeight={'bold'} fontSize={20} paddingBottom={20}>Colmeia {item.index}</Text>
+        <View flexDirection='row'>
+          <TouchableOpacity onPress={() => navigation.navigate('EditarColmeia', { colmeia: item, index: index, tipo: "colmeia" })} style={{ backgroundColor: '#FFBC00', marginRight: 15, borderRadius: 5, height: 40, width: 40, alignItems: 'center', justifyContent: 'center' }}>
+            <Ionicons name='pencil' size={30} color={'#fff'} />
+          </TouchableOpacity>
+        </View>
+
+      </View>
+      <Text paddingTop={20}>Situação: {item.situacao}</Text>
+      <Text>Quadros Coletados: {item.quaColetados}</Text>
+    </TouchableOpacity>
+  );
   
 
    function handleColmeiaNinho() {
@@ -60,6 +80,21 @@ export default function ConsultaColmeia({route, navigation} : ConsultarColmeiaPr
       setQuadroMelgueira(!quadroMelgueira)
   }
 
+  async function consultarRelatorioColmeia() {
+    const { data, error: postError } = await supabase
+    .from('relatorioColmeia')
+    .select('*')
+    .eq('colmeia_id', route.params.colmeia.id )
+    .order('created_at', { ascending: false });
+
+    
+
+    if(postError)
+        console.log(postError)
+     else {
+        setRelatorioColmeia(data)
+     }
+}
   
 
 
@@ -92,7 +127,7 @@ return (
             size={55}
             />
 </TouchableOpacity>
-<View marginHorizontal={10} gap={10}>
+<ScrollView style={{marginHorizontal:10, gap:10}}>
   <View>
     <Label fontWeight={'bold'}>Data Instalação</Label>
     <Pressable disabled={true} style={{zIndex:999, width:'45%'}} >
@@ -102,7 +137,7 @@ return (
         textAlign="center"
         onPress={() => setDatePickerVisibility(true)}
         placeholder="📅 Selecione a Data"
-        value={dataIns ? moment(dataIns).format("DD/MM/YYYY") : ""}
+        value={dataIns ? moment(dataIns).utc().format("DD/MM/YYYY") : ""}
         style={{height:50, backgroundColor: '#fff', borderWidth:1,width:'100%',borderRadius:15,borderColor:'#fbba25',fontFamily: 'Inter-Medium'}}
         />
         </Pressable>
@@ -135,7 +170,7 @@ return (
                 alignItems: 'center',
                 gap: 5,
                 marginVertical: 10,
-                width: '50%',
+                width: '45%',
               }}
               onPress={() => handleColmeiaNinho()}
             >
@@ -182,7 +217,20 @@ return (
     </View>
     </View>
 
-  </View>
+    <View>
+    <Label fontWeight={'bold'}>Relatórios</Label>   
+    {relatorioColmeia!.length > 0 ? (<View alignItems='center' paddingTop={20}>
+                        <FlatList
+                            data={relatorioColmeia}
+                            renderItem={cardRelatorioColmeia}
+                            keyExtractor={(item, index) => index.toString()}
+                            
+                            scrollEnabled={false}
+                        />
+                    </View>) : (<View></View>)}
+    </View>
+
+  </ScrollView>
 </View>
 </TouchableWithoutFeedback>
 )

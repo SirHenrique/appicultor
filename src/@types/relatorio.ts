@@ -1,4 +1,5 @@
 export type relatorio = {
+    ocorrenciaSintomas: boolean
     id: number
     dataVisita: Date
     objVisita: string
@@ -10,5 +11,7 @@ export type relatorio = {
     descTratamento: string
     limpeza: boolean
     conformidade: boolean
+    descSintomas: string
     responsavel: string
+    colmeiasAfetadas: string
 }

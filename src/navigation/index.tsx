@@ -18,6 +18,8 @@ import BaixarQrCode from '@/screens/baixar-qr-code';
 import ConsultaColmeia from '@/screens/consultar-colmeias';
 import CadastroRelatorio from '@/screens/cadastro-relatorio';
 import CadastroRelatorioColmeia from '@/screens/adicionar-relatorio-colmeia';
+import ConsultaRelatorio from '@/screens/consulta-relatorio';
+import ConsultaRelatorioColmeia from '@/screens/consulta-relatorio-colmeia';
 
 export type RootStackParamList = {
   Overview: undefined
@@ -34,6 +36,8 @@ export type RootStackParamList = {
   ConsultaColmeia: {name: string}
   CadastroRelatorio: {name: string}
   CadastroRelatorioColmeia: {name: string}
+  ConsultaRelatorio: {name: string},
+  ConsultaRelatorioColmeia: {name: string}
 }
 
 const Stack = createStackNavigator<RootStackParamList>()
@@ -139,6 +143,14 @@ export default function RootStack({ session }: { session: Session }) {
 
         <Stack.Screen name='CadastroRelatorioColmeia' // @ts-ignore
         component={CadastroRelatorioColmeia} 
+         />
+
+        <Stack.Screen name='ConsultaRelatorio' // @ts-ignore
+        component={ConsultaRelatorio} 
+         />
+
+        <Stack.Screen name='ConsultaRelatorioColmeia' // @ts-ignore
+        component={ConsultaRelatorioColmeia} 
          />
         
         
