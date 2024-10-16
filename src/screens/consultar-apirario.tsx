@@ -153,7 +153,7 @@ return `${dia}/${mes}/${ano}`;
           <View flexDirection='row' justifyContent='space-between'>
           <Text fontWeight={'bold'} fontSize={20} paddingBottom={20}>{converteData(item.dataVisita)}</Text>
           <View flexDirection='row'>
-          <TouchableOpacity onPress={() => navigation.navigate('EditarColmeia',{colmeia: item, index: index, apiario: route.params.apiario})} style={{backgroundColor:'#FFBC00', marginRight:15, borderRadius:5, height:40, width:40, alignItems:'center', justifyContent:'center'}}>
+          <TouchableOpacity onPress={() => navigation.navigate('EditaRelatorio',{relatorio: item, apiario: apiario, colmeias: colmeias })} style={{backgroundColor:'#FFBC00', marginRight:15, borderRadius:5, height:40, width:40, alignItems:'center', justifyContent:'center'}}>
            <Ionicons name='pencil' size={30} color={'#fff'}/>
           </TouchableOpacity>
           </View>

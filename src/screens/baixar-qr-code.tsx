@@ -30,7 +30,6 @@ interface QRCodeRef {
     toDataURL(callback: (data: string) => void): void;
   }
 
-
 export default function BaixarQrCode({route, navigation} : QrCodeProps) {
     const qrCodeRef = useRef<QRCodeRef | null>(null);
     

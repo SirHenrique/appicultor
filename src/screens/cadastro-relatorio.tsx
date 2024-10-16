@@ -15,6 +15,8 @@ import { Input, Label, View, Text, Button, Checkbox, TextArea } from "tamagui";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import moment from "moment";
 import useRelatorioColmeiaStore from "@/store/relatorioColmeias";
+import NetInfo from '@react-native-community/netinfo';
+import useRelatorioOfflineStore from "@/store/relatorioColmeiasOffline";
 
 interface CadastrarRelatorioProps {
   route: {
@@ -53,6 +55,7 @@ export default function CadastroRelatorio({ route, navigation }: CadastrarRelato
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
   const { relatorioColmeias, setRelatorioColmeias } = useRelatorioColmeiaStore();
   const [selectedColmeias, setSelectedColmeias] = useState<string[]>([]);
+  const {addRelatorioColmeia} = useRelatorioOfflineStore();
 
   useEffect(() => {
     console.log(route.params.apiario.colmeias)
@@ -68,7 +71,7 @@ export default function CadastroRelatorio({ route, navigation }: CadastrarRelato
     setDataVisita(date);
   }
 
-  const toggleSelection = (id : number) => {
+  const toggleSelection = (id: number) => {
 
     if (selectedColmeias.includes(id.toString())) {
       setSelectedColmeias(selectedColmeias.filter(colmeiaId => colmeiaId !== id.toString()));
@@ -77,7 +80,7 @@ export default function CadastroRelatorio({ route, navigation }: CadastrarRelato
     }
   };
 
-  const renderColmeia = ({ item, index } : any) => (
+  const renderColmeia = ({ item, index }: any) => (
     <TouchableOpacity
       onPress={() => toggleSelection(Number(index) + 1)}
       style={[
@@ -99,7 +102,60 @@ export default function CadastroRelatorio({ route, navigation }: CadastrarRelato
   );
 
   async function CadastrarRelatorio() {
-    let body = {
+    
+
+    const state = await NetInfo.fetch();
+
+    if (state.isConnected) {
+
+      let body = {
+        dataVisita: dataVisita!.toISOString(),
+        apiario_id: route.params.apiario.id,
+        objVisita: objVisita,
+        sitApiario: sitApiario,
+        tarRealizadas: tarefasRealizadas,
+        mortalidade: ocorrenciaMortalidade,
+        descSituacao: situacao,
+        tratamento: tratamento,
+        descTratamento: especifique,
+        limpeza: limpeza,
+        conformidade: veiculo,
+        colmeiasAfetadas: JSON.stringify(selectedColmeias),
+        ocorrenciaSintomas: ocorrenciaSintomas,
+        descSintomas: sintomas
+      }
+
+      console.log(body)
+      console.log(relatorioColmeias)
+      const { data, error } = await supabase.from('relatorio').insert([
+        body
+      ]).select();
+
+      if (error) {
+        console.log(error)
+      }
+      else {
+        if (relatorioColmeias.length > 0) {
+          relatorioColmeias.forEach(col => {
+            col.relatorio_id = data[0].id
+          });
+
+
+          const { data: retRelatorioColmeia, error } = await supabase.from('relatorioColmeia').insert(
+            relatorioColmeias
+          ).select();
+
+          if (error)
+            console.log(error)
+          else {
+            navigation.navigate('Menu')
+            setRelatorioColmeias([])
+          }
+        }
+      }
+
+    } else {
+      let body = {
       dataVisita: dataVisita!.toISOString(),
       apiario_id: route.params.apiario.id,
       objVisita: objVisita,
@@ -113,46 +169,22 @@ export default function CadastroRelatorio({ route, navigation }: CadastrarRelato
       conformidade: veiculo,
       colmeiasAfetadas: JSON.stringify(selectedColmeias),
       ocorrenciaSintomas: ocorrenciaSintomas,
-      descSintomas: sintomas
+      descSintomas: sintomas,
+      relatorioColmeias: relatorioColmeias
     }
+    addRelatorioColmeia(JSON.stringify(body))
 
-    console.log(body)
-    console.log(relatorioColmeias)
-    const { data, error } = await supabase.from('relatorio').insert([
-      body
-    ]).select();
-
-  if(error) {
-      console.log(error)
-  }
-  else {
-    if(relatorioColmeias.length > 0) {
-      relatorioColmeias.forEach(col => {
-        col.relatorio_id = data[0].id
-    });
-
-
-    const {  data: retRelatorioColmeia, error } = await supabase.from('relatorioColmeia').insert(
-      relatorioColmeias
-    ).select();
-
-  if(error)
-      console.log(error)
-  else {
-      navigation.navigate('Menu')
-      setRelatorioColmeias([])
-  }
+    navigation.navigate('Menu');
+    setRelatorioColmeias([]);
 
     }
-     
-  }
   }
 
-  function excluirRelatorioColmeia (index: number) {
-        
+  function excluirRelatorioColmeia(index: number) {
+
     const array = relatorioColmeias.filter((_, i) => i !== index);
-   setRelatorioColmeias(array)
-   
+    setRelatorioColmeias(array)
+
   }
 
   function handleObjVisita(rotina?: boolean, coletaMel?: boolean, outra?: boolean) {
@@ -228,11 +260,11 @@ export default function CadastroRelatorio({ route, navigation }: CadastrarRelato
   }
 
   const cardRelatorioColmeia = ({ item, index }: any) => (
-    <TouchableOpacity style={{ width: 350, height: 150, paddingVertical:10, borderRadius: 10, paddingHorizontal: 10, margin: 10, backgroundColor: '#F5E6C3' }}>
+    <TouchableOpacity style={{ width: 350, height: 150, paddingVertical: 10, borderRadius: 10, paddingHorizontal: 10, margin: 10, backgroundColor: '#F5E6C3' }}>
       <View flexDirection='row' justifyContent='space-between'>
         <Text fontWeight={'bold'} fontSize={20} paddingBottom={20}>Colmeia {item.index}</Text>
         <View flexDirection='row'>
-          <TouchableOpacity onPress={() => navigation.navigate('EditarColmeia', { colmeia: item, index: index, tipo: "local" })} style={{ backgroundColor: '#FFBC00', marginRight: 15, borderRadius: 5, height: 40, width: 40, alignItems: 'center', justifyContent: 'center' }}>
+          <TouchableOpacity onPress={() => navigation.navigate('EditarRelatorioColmeia', { relatorioColmeia: item, index: index, tipo: "local", apiario: route.params.apiario })} style={{ backgroundColor: '#FFBC00', marginRight: 15, borderRadius: 5, height: 40, width: 40, alignItems: 'center', justifyContent: 'center' }}>
             <Ionicons name='pencil' size={30} color={'#fff'} />
           </TouchableOpacity>
           <TouchableOpacity onPress={() => excluirRelatorioColmeia(index)} style={{ backgroundColor: '#F11010', borderRadius: 5, height: 40, width: 40, alignItems: 'center', justifyContent: 'center' }}>
@@ -279,7 +311,7 @@ export default function CadastroRelatorio({ route, navigation }: CadastrarRelato
                 textAlign="center"
                 onPress={() => setDatePickerVisibility(true)}
                 placeholder="📅 Selecione a Data"
-                value={dataVisita ? moment(dataVisita).format("DD/MM/YYYY") : ""}
+                value={dataVisita ? moment(dataVisita).utc().format("DD/MM/YYYY") : ""}
                 style={{ height: 50, backgroundColor: '#fff', borderWidth: 1, width: '100%', borderRadius: 15, borderColor: '#fbba25', fontFamily: 'Inter-Medium' }}
               />
               <DateTimePickerModal
@@ -613,11 +645,11 @@ export default function CadastroRelatorio({ route, navigation }: CadastrarRelato
         <View paddingBottom={15}>
           <Label fontWeight={'bold'}>Colmeias Afetadas</Label>
           <FlatList
-                            data={colmeias}
-                            renderItem={renderColmeia}
-                            keyExtractor={(item, index) => index.toString()}
-                            scrollEnabled={false}
-                        />
+            data={colmeias}
+            renderItem={renderColmeia}
+            keyExtractor={(item, index) => index.toString()}
+            scrollEnabled={false}
+          />
         </View>
 
         <View paddingBottom={15}>
@@ -813,14 +845,14 @@ export default function CadastroRelatorio({ route, navigation }: CadastrarRelato
         <View>
           <Label fontWeight={'bold'}>Situação das Colmeias ou da Coleta</Label>
           {relatorioColmeias!.length > 0 ? (<View alignItems='center' paddingTop={20}>
-                        <FlatList
-                            data={relatorioColmeias}
-                            renderItem={cardRelatorioColmeia}
-                            keyExtractor={(item, index) => index.toString()}
-                            
-                            scrollEnabled={false}
-                        />
-                    </View>) : (<View></View>)}
+            <FlatList
+              data={relatorioColmeias}
+              renderItem={cardRelatorioColmeia}
+              keyExtractor={(item, index) => index.toString()}
+
+              scrollEnabled={false}
+            />
+          </View>) : (<View></View>)}
         </View>
 
         <TouchableOpacity onPress={() => { navigation.navigate("CadastroRelatorioColmeia", { colmeia: colmeias, apiario: route.params.apiario }) }}>

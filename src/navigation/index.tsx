@@ -20,6 +20,8 @@ import CadastroRelatorio from '@/screens/cadastro-relatorio';
 import CadastroRelatorioColmeia from '@/screens/adicionar-relatorio-colmeia';
 import ConsultaRelatorio from '@/screens/consulta-relatorio';
 import ConsultaRelatorioColmeia from '@/screens/consulta-relatorio-colmeia';
+import EditaRelatorio from '@/screens/editar-relatorio';
+import EditarRelatorioColmeia from '@/screens/editar-relatorio-colmeia';
 
 export type RootStackParamList = {
   Overview: undefined
@@ -37,7 +39,9 @@ export type RootStackParamList = {
   CadastroRelatorio: {name: string}
   CadastroRelatorioColmeia: {name: string}
   ConsultaRelatorio: {name: string},
-  ConsultaRelatorioColmeia: {name: string}
+  ConsultaRelatorioColmeia: {name: string},
+  EditaRelatorio: {name: string},
+  EditarRelatorioColmeia: {name: string}
 }
 
 const Stack = createStackNavigator<RootStackParamList>()
@@ -151,6 +155,14 @@ export default function RootStack({ session }: { session: Session }) {
 
         <Stack.Screen name='ConsultaRelatorioColmeia' // @ts-ignore
         component={ConsultaRelatorioColmeia} 
+         />
+
+<Stack.Screen name='EditaRelatorio' // @ts-ignore
+        component={EditaRelatorio} 
+         />
+
+<Stack.Screen name='EditarRelatorioColmeia' // @ts-ignore
+        component={EditarRelatorioColmeia} 
          />
         
         

@@ -12,6 +12,7 @@ import { LinearGradient } from 'tamagui/linear-gradient'
 import { apiario } from "@/@types/apiario"
 import useRelatorioColmeiaStore from "@/store/relatorioColmeias"
 import { relatorioColmeia } from "@/@types/relatorioColmeia"
+import { relatorio } from "@/@types/relatorio"
 
 
 interface AdicionarRelatorioColmeiaProps {
@@ -19,7 +20,9 @@ interface AdicionarRelatorioColmeiaProps {
     params: {
       session: Session,
       colmeia: colmeia[],
-      apiario: apiario
+      apiario: apiario,
+      relatorio: relatorio,
+      tipo: string
     }
   }
   navigation: any

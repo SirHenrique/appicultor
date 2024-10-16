@@ -150,7 +150,7 @@ export default function ConsultaRelatorio({ route, navigation }: ConsultarRelato
       <View flexDirection='row' justifyContent='space-between'>
         <Text fontWeight={'bold'} fontSize={20} paddingBottom={20}>Colmeia {item.index}</Text>
         <View flexDirection='row'>
-          <TouchableOpacity onPress={() => navigation.navigate('EditarColmeia', { colmeia: item, index: index, tipo: "local" })} style={{ backgroundColor: '#FFBC00', marginRight: 15, borderRadius: 5, height: 40, width: 40, alignItems: 'center', justifyContent: 'center' }}>
+          <TouchableOpacity onPress={() => navigation.navigate('EditarRelatorioColmeia', { relatorioColmeia: item, apiario: route.params.apiario, index: index, tipo: "online", relatorio: route.params.relatorio, colmeias: route.params.colmeias, relatorioColmeias: relatorioColmeias})} style={{ backgroundColor: '#FFBC00', marginRight: 15, borderRadius: 5, height: 40, width: 40, alignItems: 'center', justifyContent: 'center' }}>
             <Ionicons name='pencil' size={30} color={'#fff'} />
           </TouchableOpacity>
         </View>
