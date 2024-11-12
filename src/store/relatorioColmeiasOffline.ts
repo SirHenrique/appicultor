@@ -74,7 +74,7 @@ const useRelatorioOfflineStore = create<ColmeiaState>((set, get) => ({
                         descSintomas: r.descSintomas
                     }
 
-                    Alert.alert(JSON.stringify(body))
+                    // Alert.alert(JSON.stringify(body))
 
                     const { data, error } = await supabase.from('relatorio').insert([
                         body
